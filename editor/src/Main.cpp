@@ -41,12 +41,19 @@ vec3 view_side_vector = vec3(1, 0, 0);
 float point_size = 20.0f;
 size_t point_picked_id = 0;
 PickingType point_picked_type = PickingType::NONE;
+std::string track_path;
 Spline path;
 
 void write_track()
 {
+    if (track_path == "")
+    {
+        track_path = win_file_dialog(
+            FileDialogType::SAVE);
+    }
+
     std::ofstream myfile(
-        "track.bin",
+        track_path,
         std::ios::binary);
 
     if (!myfile.is_open())
@@ -60,12 +67,17 @@ void write_track()
     serialize(myfile, path.normals);
     serialize(myfile, path.lengths);
     myfile.close();
+
+    cout << "Saved: " << track_path << std::endl;
 }
 
 void read_track()
 {
+    track_path = win_file_dialog(
+        FileDialogType::OPEN);
+
     std::ifstream myfile(
-        "track.bin",
+        track_path,
         std::ios::binary);
 
     if (!myfile.is_open())
@@ -87,6 +99,8 @@ void read_track()
     path.Update();
 
     myfile.close();
+
+    cout << "Loaded: " << track_path << std::endl;
 }
 
 void init()
