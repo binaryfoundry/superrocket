@@ -16,14 +16,16 @@ set(SOURCES
     "src/System.cpp"
     "src/Spline.cpp"
     "src/Main.cpp"
-    "src/Drawing.cpp")
+    "src/Drawing.cpp"
+    "src/File.cpp")
 
 set(HEADERS
     "src/Math.hpp"
     "src/System.hpp"
     "src/Spline.hpp"
     "src/Main.hpp"
-    "src/Drawing.hpp")
+    "src/Drawing.hpp"
+    "src/File.hpp")
 
 SOURCE_GROUP("Source" FILES ${SOURCES})
 SOURCE_GROUP("Source" FILES ${HEADERS})

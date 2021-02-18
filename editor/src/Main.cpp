@@ -4,6 +4,7 @@
 #include "Drawing.hpp"
 #include "Spline.hpp"
 #include "System.hpp"
+#include "File.hpp"
 
 using namespace SDLSystem;
 
@@ -12,7 +13,9 @@ enum class ApplicationState
     DEFAULT,
     VIEW,
     PLACEMENT,
-    MOVEMENT
+    MOVEMENT,
+    SAVE,
+    LOAD
 };
 
 enum class PickingType
@@ -39,6 +42,52 @@ float point_size = 20.0f;
 size_t point_picked_id = 0;
 PickingType point_picked_type = PickingType::NONE;
 Spline path;
+
+void write_track()
+{
+    std::ofstream myfile(
+        "track.bin",
+        std::ios::binary);
+
+    if (!myfile.is_open())
+    {
+        // TODO alert error
+        return;
+    }
+
+    serialize(myfile, path.points);
+    serialize(myfile, path.controls);
+    serialize(myfile, path.normals);
+    serialize(myfile, path.lengths);
+    myfile.close();
+}
+
+void read_track()
+{
+    std::ifstream myfile(
+        "track.bin",
+        std::ios::binary);
+
+    if (!myfile.is_open())
+    {
+        // TODO alert error
+        return;
+    }
+
+    path.points.clear();
+    path.controls.clear();
+    path.normals.clear();
+    path.lengths.clear();
+
+    deserialize(myfile, path.points);
+    deserialize(myfile, path.controls);
+    deserialize(myfile, path.normals);
+    deserialize(myfile, path.lengths);
+
+    path.Update();
+
+    myfile.close();
+}
 
 void init()
 {
@@ -112,6 +161,16 @@ void update()
             {
                 app_state = ApplicationState::VIEW;
                 sys->SetMouseActive(true);
+                break;
+            }
+            if (sys->IsKeyDown(66))
+            {
+                app_state = ApplicationState::SAVE;
+                break;
+            }
+            if (sys->IsKeyDown(58))
+            {
+                app_state = ApplicationState::LOAD;
                 break;
             }
 
@@ -198,6 +257,24 @@ void update()
                         break;
                     }
                 }
+            }
+            break;
+
+        case ApplicationState::SAVE:
+            if (!sys->IsKeyDown(66))
+            {
+                write_track();
+                app_state = ApplicationState::DEFAULT;
+                break;
+            }
+            break;
+
+        case ApplicationState::LOAD:
+            if (!sys->IsKeyDown(58))
+            {
+                read_track();
+                app_state = ApplicationState::DEFAULT;
+                break;
             }
             break;
 
