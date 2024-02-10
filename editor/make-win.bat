@@ -2,7 +2,7 @@
 mkdir bin >nul 2>&1
 cd bin
 @echo on
-cmake -G "Visual Studio 15 2017 Win64" ../
+cmake -G "Visual Studio 17 2022" ../
 @echo off
 cd ../
 @echo on
